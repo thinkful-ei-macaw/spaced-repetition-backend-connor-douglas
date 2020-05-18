@@ -172,17 +172,21 @@ describe('User Endpoints', function () {
           name: 'test name',
         }
         const expectedList = {
-          name: 'French',
+          name: 'Latin',
           total_score: 0,
           words: [
-            { original: 'entraine toi', translation: 'practice' },
-            { original: 'bonjour', translation: 'hello' },
-            { original: 'maison', translation: 'house' },
-            { original: 'développeur', translation: 'developer' },
-            { original: 'traduire', translation: 'translate' },
-            { original: 'incroyable', translation: 'amazing' },
-            { original: 'chien', translation: 'dog' },
-            { original: 'chat', translation: 'cat' },
+            { original: 'veneficus', translation: 'warlock' },
+            { original: 'praeliator', translation: 'warrior' },
+            { original: 'sacerdos', translation: 'priest' },
+            { original: 'magus', translation: 'mage' },
+            { original: 'perfide', translation: 'rogue' },
+            { original: 'venandi', translation: 'hunter' },
+            { original: 'monachus', translation: 'monk' },
+            { original: 'druidae', translation: 'druid' },
+            { original: 'flaminis', translation: 'shaman' },
+            { original: 'paladinus', translation: 'paladin' },
+            { original: 'mors miles', translation: 'death knight' },
+            { original: 'daemonium venator', translation: 'demon-hunter' },
           ]
         }
         return supertest(app)

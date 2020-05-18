@@ -32,7 +32,7 @@ VALUES
   (9, 1, 'flaminis', 'shaman', 10),
   (10, 1, 'paladinus', 'paladin', 11),
   (11, 1, 'mors miles', 'death knight', 12),
-  (12, 1, 'daemonium venator', 'deamon-hunter', null);
+  (12, 1, 'daemonium venator', 'demon-hunter', null);
 
 UPDATE "language" SET head = 1 WHERE id = 1;
 
