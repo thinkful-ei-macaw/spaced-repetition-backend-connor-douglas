@@ -17,18 +17,22 @@ VALUES
 
 INSERT INTO "language" ("id", "name", "user_id")
 VALUES
-  (1, 'French', 1);
+  (1, 'Latin', 1);
 
 INSERT INTO "word" ("id", "language_id", "original", "translation", "next")
 VALUES
-  (1, 1, 'entraine toi', 'practice', 2),
-  (2, 1, 'bonjour', 'hello', 3),
-  (3, 1, 'maison', 'house', 4),
-  (4, 1, 'développeur', 'developer', 5),
-  (5, 1, 'traduire', 'translate', 6),
-  (6, 1, 'incroyable', 'amazing', 7),
-  (7, 1, 'chien', 'dog', 8),
-  (8, 1, 'chat', 'cat', null);
+  (1, 1, 'veneficus', 'warlock', 2),
+  (2, 1, 'praeliator', 'warrior', 3),
+  (3, 1, 'sacerdos', 'priest', 4),
+  (4, 1, 'magus', 'mage', 5),
+  (5, 1, 'perfide', 'rogue', 6),
+  (6, 1, 'venandi', 'hunter', 7),
+  (7, 1, 'monachus', 'monk', 8),
+  (8, 1, 'druidae', 'druid', 9),
+  (9, 1, 'flaminis', 'shaman', 10),
+  (10, 1, 'paladinus', 'paladin', 11),
+  (11, 1, 'mors miles', 'death knight', 12),
+  (12, 1, 'daemonium venator', 'deamon-hunter', null);
 
 UPDATE "language" SET head = 1 WHERE id = 1;
 
