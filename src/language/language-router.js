@@ -2,7 +2,7 @@ const express = require('express')
 const LanguageService = require('./language-service')
 const { requireAuth } = require('../middleware/jwt-auth')
 const jsonBodyParser = express.json();
-
+const LinkedList = require('./list-algorithm')
 const languageRouter = express.Router()
 
 languageRouter
@@ -76,6 +76,13 @@ languageRouter
         req.app.get('db'),
         req.language.id
       )
+
+      const wordsList = new LinkedList();
+
+      words.forEach(element => {
+        wordsList.insertLast(element)
+      });
+      console.log(wordsList.head)
       const language = await LanguageService.getUsersLanguage(
           req.app.get('db'),
           req.user.id,)
@@ -85,12 +92,13 @@ languageRouter
     }
 
     else if(req.body.guess !== words[0].translation){
+
       res.status(200).json({
-        nextWord: words[1].original,
+        nextWord: wordsList.head.next.value.original,
         totalScore: language.total_score,
-        wordCorrectCount: words[0].correct_count,
-        wordIncorrectCount: words[0].incorrect_count,
-        answer: words[0].translation,
+        wordCorrectCount: wordsList.head.value.correct_count,
+        wordIncorrectCount: wordsList.head.value.incorrect_count,
+        answer: wordsList.head.value.translation,
         isCorrect: false
     })}
 
