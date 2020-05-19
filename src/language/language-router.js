@@ -87,20 +87,40 @@ languageRouter
           req.app.get('db'),
           req.user.id,)
 
+    
+    function comparingAndMoving(item, guess, m) {
+      if(item.value.translation !== guess) {
+        item.value.memory_value = 1;
+        
+      } else {
+        item.value.memory_value = (m * 2);
+        LanguageService.incrementTotalScore(req.app.get('db'), language.total_score, item.value.language_id)
+      }
+      wordsList.remove(item.value);
+      wordsList.insertAt(item.value, (item.value.memory_value))
+
+    }
+
     if(!req.body.guess) {
       res.status(400).json({error: `Missing 'guess' in request body`})
     }
 
     else if(req.body.guess !== words[0].translation){
 
-      res.status(200).json({
-        nextWord: wordsList.head.next.value.original,
-        totalScore: language.total_score,
-        wordCorrectCount: wordsList.head.value.correct_count,
-        wordIncorrectCount: wordsList.head.value.incorrect_count,
-        answer: wordsList.head.value.translation,
-        isCorrect: false
-    })}
+
+    comparingAndMoving(wordsList.head, req.body.guess, wordsList.head.value.memory_value)
+    LanguageService.updateWordsList(wordsList)
+
+    res.status(200).json({
+      nextWord: wordsList.head.next.value.original,
+      totalScore: language.total_score,
+      wordCorrectCount: wordsList.head.value.correct_count,
+      wordIncorrectCount: wordsList.head.value.incorrect_count,
+      answer: wordsList.head.value.translation,
+      isCorrect: false
+    })
+  
+  }
 
   })
 

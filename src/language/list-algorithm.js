@@ -108,19 +108,11 @@ class LinkedList {
       currNode = currNode.next;
     }
     if (currNode === null) {
+      // eslint-disable-next-line no-console
       console.log('Item not found');
       return;
     }
     previousNode.next = currNode.next;
-  }
-  comparingAndMoving(item, guess, m) {
-    if(item.value.translation !== guess) {
-      item.value.memory_value = 1;
-    } else {
-      item.value.memory_value = (item.value.memory_value * 2)
-    }
-
-
   }
 }
 
