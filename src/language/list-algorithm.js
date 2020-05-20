@@ -63,12 +63,14 @@ class LinkedList {
       return;
     }
 
-    let currNode = this.head;
-    let previousNode = this.head;
+    // console.log(this.head)
+
+    let currNode = this.head; // id 2 (next 3)
+    let previousNode = this.head; // id 2 (next 3)
 
     for (let i = 1; i < parseInt(key); i++) {
-      previousNode = currNode;
-      currNode = currNode.next;
+      previousNode = currNode; // id 2 (next 3)
+      currNode = currNode.next; // id 3 (next 4)
     }
 
     // while ((currNode !== null) && (previousNode.value !== key)) {
@@ -76,8 +78,14 @@ class LinkedList {
     //   currNode = currNode.next;
     // }
 
-    previousNode.next = new _Node(item, currNode);
+    // console.log(currNode)
+
+    let newNode = new _Node(item, currNode.next)
+    newNode.value.next = currNode.next.value.id
+    previousNode.next /*id 2(next 1)*/ = newNode; //id 1 next 3
+    previousNode.value.next = newNode.value.id
   }
+
   find(item) {
     let currNode = this.head;
     if (!this.head) {

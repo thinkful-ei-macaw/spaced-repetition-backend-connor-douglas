@@ -28,8 +28,9 @@ const LanguageService = {
       )
       .where({ language_id });
   },
-  updateWordsList: async function (db, wordsList) {
-    let walk = wordsList.head;
+  
+  updateWordsList:async function (db, wordsList) {
+    let walk = wordsList.head.value;
     let trx = await db.transaction();
     try { 
       while (walk) {
@@ -41,13 +42,11 @@ const LanguageService = {
             correct_count: walk.value.correct_count,
             incorrect_count: walk.value.incorrect_count
           });
-        walk = walk.next;
-      } 
+        walk = wordsList.next.value;
+      }
       trx.commit()
-      .done()
     } catch(e) {
       await trx.rollback()
-      .done()
     }
     
   },
