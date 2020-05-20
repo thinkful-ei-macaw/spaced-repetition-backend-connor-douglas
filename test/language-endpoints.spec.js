@@ -185,7 +185,7 @@ describe.only('Language Endpoints', function () {
             nextWord: testLanguagesWords[1].original,
             totalScore: 0,
             wordCorrectCount: 0,
-            wordIncorrectCount: 0,
+            wordIncorrectCount: 1,
             answer: testLanguagesWords[0].translation,
             isCorrect: false
           })

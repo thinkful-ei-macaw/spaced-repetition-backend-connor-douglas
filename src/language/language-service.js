@@ -30,10 +30,12 @@ const LanguageService = {
   },
   
   updateWordsList:async function (db, wordsList) {
-    let walk = wordsList.head.value;
+    let walk = wordsList.head;
     let trx = await db.transaction();
+    let count = 0
     try { 
-      while (walk) {
+      while (walk.next) {
+        count++
         await db('word').transacting(trx)
           .where('id', walk.value.id)
           .update({ 
@@ -42,10 +44,19 @@ const LanguageService = {
             correct_count: walk.value.correct_count,
             incorrect_count: walk.value.incorrect_count
           });
-        walk = wordsList.next.value;
+        walk = walk.next;
       }
-      trx.commit()
+      await db('word').transacting(trx)
+        .where('id', walk.value.id)
+        .update({ 
+          next: null,
+          memory_value: walk.value.memory_value,
+          correct_count: walk.value.correct_count,
+          incorrect_count: walk.value.incorrect_count
+        });
+        trx.commit()
     } catch(e) {
+      console.log(e)
       await trx.rollback()
     }
     

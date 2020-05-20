@@ -63,8 +63,6 @@ class LinkedList {
       return;
     }
 
-    // console.log(this.head)
-
     let currNode = this.head; // id 2 (next 3)
     let previousNode = this.head; // id 2 (next 3)
 
@@ -72,13 +70,6 @@ class LinkedList {
       previousNode = currNode; // id 2 (next 3)
       currNode = currNode.next; // id 3 (next 4)
     }
-
-    // while ((currNode !== null) && (previousNode.value !== key)) {
-    //   previousNode = currNode;
-    //   currNode = currNode.next;
-    // }
-
-    // console.log(currNode)
 
     let newNode = new _Node(item, currNode.next)
     newNode.value.next = currNode.next.value.id
