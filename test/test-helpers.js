@@ -100,7 +100,7 @@ function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
     subject: user.username,
     algorithm: 'HS256',
   })
-  return `Bearer ${token}`
+  return `bearer ${token}`
 }
 
 /**

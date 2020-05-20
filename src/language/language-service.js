@@ -44,9 +44,12 @@ const LanguageService = {
         walk = walk.next;
       } 
       trx.commit()
+      .done()
     } catch(e) {
       await trx.rollback()
+      .done()
     }
+    
   },
   incrementTotalScore(db, total_score, language_id) {
     let newScore = total_score++;

@@ -107,21 +107,28 @@ languageRouter
 
     else if(req.body.guess !== words[0].translation){
 
-
-    comparingAndMoving(wordsList.head, req.body.guess, wordsList.head.value.memory_value)
-    LanguageService.updateWordsList(wordsList)
-
-    res.status(200).json({
+    let resObject = {
       nextWord: wordsList.head.next.value.original,
       totalScore: language.total_score,
       wordCorrectCount: wordsList.head.value.correct_count,
       wordIncorrectCount: wordsList.head.value.incorrect_count,
       answer: wordsList.head.value.translation,
       isCorrect: false
-    })
-  
-  }
+    }
 
+    comparingAndMoving(wordsList.head, req.body.guess, wordsList.head.value.memory_value)
+    LanguageService.updateWordsList(req.app.get('db'), wordsList)
+
+    res.status(200).json({
+      nextWord: resObject.nextWord,
+      totalScore: resObject.totalScore,
+      wordCorrectCount: resObject.wordCorrectCount,
+      wordIncorrectCount: resObject.wordIncorrectCount,
+      answer: resObject.answer,
+      isCorrect: resObject.isCorrect
+    })
+  }
+return;
   })
 
 module.exports = languageRouter
