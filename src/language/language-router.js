@@ -2,7 +2,6 @@ const express = require('express')
 const LanguageService = require('./language-service')
 const { requireAuth } = require('../middleware/jwt-auth')
 const jsonBodyParser = express.json();
-const LinkedList = require('./list-algorithm')
 const languageRouter = express.Router()
 
 languageRouter
@@ -72,18 +71,17 @@ languageRouter
 languageRouter
   .post('/guess',jsonBodyParser, async (req, res, next) => {
     
-      const words = await LanguageService.getLanguageWords(
+      // const words = await LanguageService.getLanguageWords(
+      //   req.app.get('db'),
+      //   req.language.id
+      // )
+
+      const wordsList = await LanguageService.getWordsList(
         req.app.get('db'),
         req.language.id
       )
 
-      const wordsList = new LinkedList();
-
-      words.forEach(element => {
-        wordsList.insertLast(element)
-      });
-
-      const language = await LanguageService.getUsersLanguage(
+      const {head, id, total_score} = await LanguageService.getUsersLanguage(
           req.app.get('db'),
           req.user.id,)
 
@@ -94,27 +92,29 @@ languageRouter
         
       } else {
         item.value.memory_value = (m * 2);
-        LanguageService.incrementTotalScore(req.app.get('db'), language.total_score, item.value.language_id)
+        console.log('memory value = ', item.value.memory_value)
+        await LanguageService.incrementTotalScore(req.app.get('db'), language.total_score, item.value.language_id)
       }
       wordsList.remove(item.value);
-
+      console.log('line 101', wordsList.head.value.original)
       wordsList.insertAt(item.value, item.value.memory_value)
 
     }
 
     let resObject;
+    console.log('line 107', wordsList.head.value.original)
 
     if(!req.body.guess) {
       res.status(400).json({error: `Missing 'guess' in request body`})
-    }
-
-    else if(req.body.guess !== words[0].translation){
+    } 
+    
+    else if(req.body.guess !== wordsList.head.value.translation){
 
     resObject = {
       nextWord: wordsList.head.next.value.original,
       totalScore: language.total_score,
       wordCorrectCount: wordsList.head.value.correct_count,
-      wordIncorrectCount: ++wordsList.head.value.incorrect_count,
+      wordIncorrectCount: wordsList.head.value.incorrect_count++,
       answer: wordsList.head.value.translation,
       isCorrect: false
     }
@@ -130,8 +130,28 @@ languageRouter
       answer: resObject.answer,
       isCorrect: resObject.isCorrect
     })
-  } else {
-    res.send('i want to kill something')
+  }
+  else {
+    resObject = {
+      nextWord: wordsList.head.next.value.original,
+      totalScore: language.total_score + 1,
+      wordCorrectCount: wordsList.head.value.correct_count++,
+      wordIncorrectCount: wordsList.head.value.incorrect_count,
+      answer: wordsList.head.value.translation,
+      isCorrect: true
+    }
+    console.log('line 145', wordsList.head.value.original)
+    await comparingAndMoving(wordsList.head, req.body.guess, wordsList.head.value.memory_value)
+    await LanguageService.updateWordsList(req.app.get('db'), wordsList)
+    console.log('line 148', wordsList.head.value.original)
+    res.status(200).json({
+      nextWord: resObject.nextWord,
+      totalScore: resObject.totalScore,
+      wordCorrectCount: resObject.wordCorrectCount,
+      wordIncorrectCount: resObject.wordIncorrectCount,
+      answer: resObject.answer,
+      isCorrect: true
+    })
   }
   })
 

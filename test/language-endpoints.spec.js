@@ -185,7 +185,7 @@ describe.only('Language Endpoints', function () {
             nextWord: testLanguagesWords[1].original,
             totalScore: 0,
             wordCorrectCount: 0,
-            wordIncorrectCount: 1,
+            wordIncorrectCount: 0,
             answer: testLanguagesWords[0].translation,
             isCorrect: false
           })
@@ -205,7 +205,7 @@ describe.only('Language Endpoints', function () {
             nextWord: testLanguagesWords[0].original,
             totalScore: 0,
             wordCorrectCount: 0,
-            wordIncorrectCount: 1,
+            wordIncorrectCount: 0,
             answer: testLanguagesWords[1].translation,
             isCorrect: false
           })
@@ -217,7 +217,7 @@ describe.only('Language Endpoints', function () {
         word => word.language_id === testLanguage.id
       )
 
-      it.skip(`responds with correct and moves head`, () => {
+      it(`responds with correct and moves head`, () => {
         const correctPostBody = {
           guess: testLanguagesWords[0].translation,
         }
@@ -236,10 +236,11 @@ describe.only('Language Endpoints', function () {
           })
       })
 
-      it.skip(`moves the word 2 spaces, increases score and correct count`, async () => {
+      it.only(`moves the word 2 spaces, increases score and correct count`, async () => {
         let correctPostBody = {
           guess: testLanguagesWords[0].translation,
         }
+        console.log('1st correct post = ', correctPostBody)
         await supertest(app)
           .post(`/api/language/guess`)
           .set('Authorization', helpers.makeAuthHeader(testUser))
@@ -248,6 +249,7 @@ describe.only('Language Endpoints', function () {
         correctPostBody = {
           guess: testLanguagesWords[1].translation,
         }
+        console.log('2nd correct post = ',correctPostBody)
         await supertest(app)
           .post(`/api/language/guess`)
           .set('Authorization', helpers.makeAuthHeader(testUser))
