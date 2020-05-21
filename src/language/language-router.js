@@ -91,6 +91,8 @@ languageRouter
       req.user.id
     )
 
+    const words = await LanguageService.getLanguageWords(req.app.get('db'), id) 
+
     async function comparingAndMoving(item, guess, m) {
       if (item.value.translation !== guess) {
         item.value.memory_value = 1;
@@ -102,7 +104,12 @@ languageRouter
         item.value.correct_count++
         await LanguageService.incrementTotalScore(req.app.get('db'), total_score, item.value.language_id)
         wordsList.remove(item.value);
-        wordsList.insertAtCorrect(item.value, item.value.memory_value)
+        if (item.value.memory_value >= words.length) {
+          item.value.next = null;
+          wordsList.insertLast(item.value)
+        } else {
+            wordsList.insertAtCorrect(item.value, item.value.memory_value)
+        }
       }
     }
 
