@@ -205,7 +205,7 @@ describe.only('Language Endpoints', function () {
             nextWord: testLanguagesWords[0].original,
             totalScore: 0,
             wordCorrectCount: 0,
-            wordIncorrectCount: 0,
+            wordIncorrectCount: 1,
             answer: testLanguagesWords[1].translation,
             isCorrect: false
           })
@@ -273,7 +273,7 @@ describe.only('Language Endpoints', function () {
           .expect({
             nextWord: testLanguagesWords[0].original,
             totalScore: 3,
-            wordCorrectCount: 0,
+            wordCorrectCount: 1,
             wordIncorrectCount: 0,
             answer: testLanguagesWords[2].translation,
             isCorrect: true

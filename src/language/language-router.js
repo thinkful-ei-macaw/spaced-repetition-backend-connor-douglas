@@ -51,15 +51,25 @@ languageRouter
         req.app.get('db'),
         req.language.id
       )
+
+      const wordsList = await LanguageService.getWordsList(
+        req.app.get('db'),
+        req.language.id,
+        req.user.id
+      )
+
       const language = await LanguageService.getUsersLanguage(
         req.app.get('db'),
         req.user.id,
       )
+
+      console.log(wordsList.head)
+
       res.json({
         nextWord: words[0].original,
         totalScore: language.total_score,
         wordCorrectCount: words[0].correct_count,
-        wordIncorrectCount: words[0].incorrect_count
+        wordIncorrectCount: words[0].incorrect_count,
       })
       next()
     } catch (error) {
@@ -70,34 +80,30 @@ languageRouter
 
 languageRouter
   .post('/guess', jsonBodyParser, async (req, res, next) => {
-
-    // const words = await LanguageService.getLanguageWords(
-    //   req.app.get('db'),
-    //   req.language.id
-    // )
-
-    const wordsList = await LanguageService.getWordsList(
-      req.app.get('db'),
-      req.language.id,
-      req.user.id
-    )
-
+    console.log(req.body)
     const { total_score, id } = await LanguageService.getUsersLanguage(
       req.app.get('db'),
       req.user.id)
 
+    const wordsList = await LanguageService.getWordsList(
+      req.app.get('db'),
+      id,
+      req.user.id
+    )
+
     async function comparingAndMoving(item, guess, m) {
       if (item.value.translation !== guess) {
         item.value.memory_value = 1;
+        item.value.incorrect_count++
         wordsList.remove(item.value);
         wordsList.insertAtIncorrect(item.value, item.value.memory_value)
       } else {
         item.value.memory_value = (m * 2);
+        item.value.correct_count++
         await LanguageService.incrementTotalScore(req.app.get('db'), total_score, item.value.language_id)
         wordsList.remove(item.value);
         wordsList.insertAtCorrect(item.value, item.value.memory_value)
       }
-      
     }
 
     let resObject;
@@ -110,8 +116,8 @@ languageRouter
       resObject = {
         nextWord: wordsList.head.next.value.original,
         totalScore: total_score,
-        wordCorrectCount: wordsList.head.value.correct_count,
-        wordIncorrectCount: wordsList.head.value.incorrect_count++,
+        wordCorrectCount: wordsList.head.next.value.correct_count,
+        wordIncorrectCount: wordsList.head.next.value.incorrect_count,
         answer: wordsList.head.value.translation,
         isCorrect: false
       }
@@ -131,23 +137,19 @@ languageRouter
     }
     else {
 
-      console.log(wordsList.head.value.correct_count)
-
       resObject = {
         nextWord: wordsList.head.next.value.original,
         totalScore: total_score + 1,
-        wordCorrectCount: wordsList.head.value.correct_count++,
-        wordIncorrectCount: wordsList.head.value.incorrect_count,
+        wordCorrectCount: wordsList.head.next.value.correct_count,
+        wordIncorrectCount: wordsList.head.next.value.incorrect_count,
         answer: wordsList.head.value.translation,
         isCorrect: true
       }
 
-      console.log(wordsList.head.value.correct_count)
-      // console.log('line 145', wordsList.head.value.original)
       await comparingAndMoving(wordsList.head, req.body.guess, wordsList.head.value.memory_value)
       await LanguageService.updateWordsList(req.app.get('db'), wordsList)
       await LanguageService.updateLanguageHead(req.app.get('db'), id, wordsList.head.value.id)
-      // console.log('line 148', wordsList.head.value.original)
+      
       res.status(200).json({
         nextWord: resObject.nextWord,
         totalScore: resObject.totalScore,
