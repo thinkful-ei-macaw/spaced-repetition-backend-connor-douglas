@@ -57,24 +57,44 @@ class LinkedList {
     previousNode.next = new _Node(item, currNode);
   }
 
-  insertAt(item, key) {
+  insertAtIncorrect(item, key) {
     if (this.head === null) {
       this.insertFirst(item);
       return;
     }
 
-    let currNode = this.head; // id 2 (next 3)
-    let previousNode = this.head; // id 2 (next 3)
+    let currNode = this.head; // 2
+    let previousNode = this.head; // 2
 
     for (let i = 1; i < parseInt(key); i++) {
-      previousNode = currNode; // id 2 (next 3)
-      currNode = currNode.next; // id 3 (next 4)
+      previousNode = currNode; // 3
+      currNode = currNode.next; // 4
     }
 
     let newNode = new _Node(item, currNode.next)
     newNode.value.next = currNode.next.value.id
-    previousNode.next /*id 2(next 1)*/ = newNode; //id 1 next 3
+    previousNode.next = newNode;
     previousNode.value.next = newNode.value.id
+  }
+
+  insertAtCorrect(item, key) {
+    if (this.head === null) {
+      this.insertFirst(item);
+      return;
+    }
+
+    let currNode = this.head; // 2
+    let previousNode = this.head; // 2
+
+    for (let i = 1; i < parseInt(key); i++) {
+      previousNode = currNode; // 3
+      currNode = currNode.next; // 4
+    }
+
+    let newNode = new _Node(item, currNode.next)
+    newNode.value.next = currNode.next.value.id
+    previousNode.next.next = newNode;
+    previousNode.next.value.next = newNode.value.id
   }
 
   find(item) {

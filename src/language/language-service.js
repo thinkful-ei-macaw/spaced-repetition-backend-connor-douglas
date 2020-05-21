@@ -14,13 +14,21 @@ const LanguageService = {
       .where('language.user_id', user_id)
       .first();
   },
-  getWordsHead(db, language_id) {
-    return db
-      .from('language')
-      .select(
-        'head'
-      )
-      .where('id', language_id)
+  updateLanguageHead:async function(db, language_id, head_id) {
+    let newHead = head_id;
+    let trx = await db.transaction()
+    try {
+      await db('language').transacting(trx)
+        .where('id', language_id)
+        .update({
+          head: newHead
+        });
+      trx.commit()
+    }
+    catch(e) {
+      console.log(e)
+      await trx.rollback()
+    }
   },
   getLanguageWords(db, language_id) {
     return db
@@ -83,17 +91,18 @@ const LanguageService = {
       await trx.rollback()
     }
   },
-  getWordsList: async function(db, language_id) {
+  getWordsList: async function(db, language_id, user_id) {
     const words = await this.getLanguageWords(db, language_id);
-    const {head} = await this.getWordsHead(db, language_id)
+    const {head} = await this.getUsersLanguage(db, user_id)
     const wordsList = new LinkedList
     let wordMap = new Map();
     words.forEach(element => { wordMap.set(element.id, element)});
-    let currentItem = head;
-    for (let i = 0; i < words.length; i++) {
+    let currentItem = wordMap.get(head);
+    for (let i = 1; i < words.length; i++) {
       wordsList.insertLast(currentItem);
-      currentItem = map.get(currentItem.next)
+      currentItem = wordMap.get(currentItem.next)
     }
+    wordsList.insertLast(currentItem);
     return wordsList;
   },
 };

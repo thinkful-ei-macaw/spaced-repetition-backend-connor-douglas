@@ -236,7 +236,7 @@ describe.only('Language Endpoints', function () {
           })
       })
 
-      it.only(`moves the word 2 spaces, increases score and correct count`, async () => {
+      it(`moves the word 2 spaces, increases score and correct count`, async () => {
         let correctPostBody = {
           guess: testLanguagesWords[0].translation,
         }
@@ -273,7 +273,7 @@ describe.only('Language Endpoints', function () {
           .expect({
             nextWord: testLanguagesWords[0].original,
             totalScore: 3,
-            wordCorrectCount: 1,
+            wordCorrectCount: 0,
             wordIncorrectCount: 0,
             answer: testLanguagesWords[2].translation,
             isCorrect: true

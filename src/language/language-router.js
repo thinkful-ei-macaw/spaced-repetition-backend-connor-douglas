@@ -78,35 +78,35 @@ languageRouter
 
     const wordsList = await LanguageService.getWordsList(
       req.app.get('db'),
-      req.language.id
+      req.language.id,
+      req.user.id
     )
 
-    const { total_score } = await LanguageService.getUsersLanguage(
+    const { total_score, id } = await LanguageService.getUsersLanguage(
       req.app.get('db'),
       req.user.id)
-
 
     async function comparingAndMoving(item, guess, m) {
       if (item.value.translation !== guess) {
         item.value.memory_value = 1;
-
+        wordsList.remove(item.value);
+        wordsList.insertAtIncorrect(item.value, item.value.memory_value)
       } else {
         item.value.memory_value = (m * 2);
-        console.log('memory value = ', item.value.memory_value)
         await LanguageService.incrementTotalScore(req.app.get('db'), total_score, item.value.language_id)
+        wordsList.remove(item.value);
+        wordsList.insertAtCorrect(item.value, item.value.memory_value)
       }
-      wordsList.remove(item.value);
-      console.log('line 101', wordsList.head.value.original)
-      wordsList.insertAt(item.value, item.value.memory_value)
+      
     }
 
     let resObject;
-    console.log('line 107', wordsList.head.value.original)
 
     if (!req.body.guess) {
       res.status(400).json({ error: `Missing 'guess' in request body` })
     }
     else if (req.body.guess !== wordsList.head.value.translation) {
+      
       resObject = {
         nextWord: wordsList.head.next.value.original,
         totalScore: total_score,
@@ -118,6 +118,7 @@ languageRouter
 
       await comparingAndMoving(wordsList.head, req.body.guess, wordsList.head.value.memory_value)
       await LanguageService.updateWordsList(req.app.get('db'), wordsList)
+      await LanguageService.updateLanguageHead(req.app.get('db'), id, wordsList.head.value.id)
 
       res.status(200).json({
         nextWord: resObject.nextWord,
@@ -129,6 +130,9 @@ languageRouter
       })
     }
     else {
+
+      console.log(wordsList.head.value.correct_count)
+
       resObject = {
         nextWord: wordsList.head.next.value.original,
         totalScore: total_score + 1,
@@ -137,17 +141,20 @@ languageRouter
         answer: wordsList.head.value.translation,
         isCorrect: true
       }
-      console.log('line 145', wordsList.head.value.original)
+
+      console.log(wordsList.head.value.correct_count)
+      // console.log('line 145', wordsList.head.value.original)
       await comparingAndMoving(wordsList.head, req.body.guess, wordsList.head.value.memory_value)
       await LanguageService.updateWordsList(req.app.get('db'), wordsList)
-      console.log('line 148', wordsList.head.value.original)
+      await LanguageService.updateLanguageHead(req.app.get('db'), id, wordsList.head.value.id)
+      // console.log('line 148', wordsList.head.value.original)
       res.status(200).json({
         nextWord: resObject.nextWord,
         totalScore: resObject.totalScore,
         wordCorrectCount: resObject.wordCorrectCount,
         wordIncorrectCount: resObject.wordIncorrectCount,
         answer: resObject.answer,
-        isCorrect: true
+        isCorrect: resObject.isCorrect
       })
     }
   })
