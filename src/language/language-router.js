@@ -52,18 +52,10 @@ languageRouter
         req.language.id
       )
 
-      const wordsList = await LanguageService.getWordsList(
-        req.app.get('db'),
-        req.language.id,
-        req.user.id
-      )
-
       const language = await LanguageService.getUsersLanguage(
         req.app.get('db'),
         req.user.id,
       )
-
-      console.log(wordsList.head)
 
       res.json({
         nextWord: words[0].original,
@@ -75,12 +67,10 @@ languageRouter
     } catch (error) {
       next(error)
     }
-
   })
 
 languageRouter
   .post('/guess', jsonBodyParser, async (req, res, next) => {
-    console.log(req.body)
     const { total_score, id } = await LanguageService.getUsersLanguage(
       req.app.get('db'),
       req.user.id)

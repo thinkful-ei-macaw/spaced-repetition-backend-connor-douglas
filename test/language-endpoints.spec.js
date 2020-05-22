@@ -240,7 +240,6 @@ describe.only('Language Endpoints', function () {
         let correctPostBody = {
           guess: testLanguagesWords[0].translation,
         }
-        console.log('1st correct post = ', correctPostBody)
         await supertest(app)
           .post(`/api/language/guess`)
           .set('Authorization', helpers.makeAuthHeader(testUser))
@@ -249,7 +248,6 @@ describe.only('Language Endpoints', function () {
         correctPostBody = {
           guess: testLanguagesWords[1].translation,
         }
-        console.log('2nd correct post = ',correctPostBody)
         await supertest(app)
           .post(`/api/language/guess`)
           .set('Authorization', helpers.makeAuthHeader(testUser))

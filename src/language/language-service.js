@@ -26,7 +26,7 @@ const LanguageService = {
       trx.commit()
     }
     catch(e) {
-      console.log(e)
+      console.error(e)
       await trx.rollback()
     }
   },
@@ -71,7 +71,7 @@ const LanguageService = {
         });
       trx.commit()
     } catch (e) {
-      console.log(e)
+      console.error(e)
       await trx.rollback()
     }
   },
@@ -87,7 +87,7 @@ const LanguageService = {
       trx.commit()
     }
     catch(e) {
-      console.log(e)
+      console.error(e)
       await trx.rollback()
     }
   },
