@@ -1,5 +1,8 @@
 # Spaced repetition API!
 
+A spaced repetition application made by Connor McCormack and Douglas Miner
+
+
 ## Local dev setup
 
 If using user `dunder-mifflin`:
